@@ -1,4 +1,5 @@
 using Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ builder.Services.AddCors();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<DataContext>();
 
 var app = builder.Build();
 
@@ -29,5 +31,19 @@ app.UseCors(policy => policy
 app.UseAuthorization();
 
 app.MapControllers();
+//seed data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try{
+        var context = services.GetRequiredService<DataContext>();
+        context.Database.Migrate();
+        Seed.SeedData(context);
+    } catch (Exception e)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(e, "An error occurred while seeding the database");
+    }
+}
 
 app.Run();
