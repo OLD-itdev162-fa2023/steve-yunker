@@ -25,5 +25,19 @@ namespace API.Controllers
         {
             return this.context.Posts.ToList();
         }
+
+        //GET api by id
+
+        [HttpGet("{id}", Name = "GetById")]
+        public ActionResult<Post> GetById(Guid id)
+        {
+            var post = this.context.Posts.Find(id);
+            if(post is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(post);
+        }
     }
 }
