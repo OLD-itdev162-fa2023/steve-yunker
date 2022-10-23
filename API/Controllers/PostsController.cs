@@ -41,7 +41,7 @@ namespace API.Controllers
         }
         
         //create endpoint
-
+        
         [HttpPost(Name = "Create")]
         public ActionResult<Post> Create ([FromBody]Post request){
             var post = new Post{
